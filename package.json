@@ -1,0 +1,18 @@
+{
+  "name": "skyalert",
+  "version": "1.0.0",
+  "description": "Cute desktop airplane notification widget that flies calendar reminders across your screen",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": ["desktop", "widget", "calendar", "notifications", "cute"],
+  "author": "Sagarika",
+  "license": "MIT",
+  "dependencies": {
+    "googleapis": "^134.0.0"
+  },
+  "devDependencies": {
+    "electron": "^31.0.0"
+  }
+}

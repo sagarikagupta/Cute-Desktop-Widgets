@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkyAlert Settings</title>
+  <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+  <div class="window">
+    <!-- Title Bar -->
+    <div class="title-bar" id="title-bar">
+      <div class="title-bar-left">
+        <span class="title-icon">✈️</span>
+        <span class="title-text">SkyAlert Settings</span>
+      </div>
+      <button class="close-btn" id="close-btn">✕</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-airplane">🛩️</div>
+        <h1>SkyAlert</h1>
+        <p class="subtitle">Cute calendar notifications</p>
+      </div>
+
+      <!-- Google Calendar Section -->
+      <div class="section">
+        <h2>📅 Google Calendar</h2>
+        <div class="auth-status" id="auth-status">
+          <div class="status-dot disconnected" id="status-dot"></div>
+          <span id="status-text">Not connected</span>
+        </div>
+        <button class="btn btn-primary" id="auth-btn">Connect Google Calendar</button>
+        <p class="hint" id="auth-hint">
+          Requires a Google Cloud project with Calendar API enabled.
+          <a href="#" id="setup-link">Setup guide →</a>
+        </p>
+      </div>
+
+      <!-- Alert Timing -->
+      <div class="section">
+        <h2>⏰ Alert Timing</h2>
+        <div class="option-group">
+          <label>Notify me before events:</label>
+          <div class="radio-pills" id="timing-pills">
+            <button class="pill" data-value="5">5 min</button>
+            <button class="pill active" data-value="15">15 min</button>
+            <button class="pill" data-value="30">30 min</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Airplane Speed -->
+      <div class="section">
+        <h2>🛩️ Airplane Speed</h2>
+        <div class="option-group">
+          <label>How fast should it fly?</label>
+          <div class="radio-pills" id="speed-pills">
+            <button class="pill" data-value="slow">🐢 Slow</button>
+            <button class="pill active" data-value="normal">🐰 Normal</button>
+            <button class="pill" data-value="fast">🚀 Fast</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toggles -->
+      <div class="section">
+        <h2>✨ Options</h2>
+        <div class="toggle-row">
+          <span>🔔 Sound effects</span>
+          <label class="toggle">
+            <input type="checkbox" id="sound-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span>🚀 Start at login</span>
+          <label class="toggle">
+            <input type="checkbox" id="startup-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Test Flight -->
+      <div class="section section-center">
+        <button class="btn btn-fun" id="test-btn">
+          <span class="btn-icon">✈️</span>
+          Test Flight!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="settings.js"></script>
+</body>
+</html>

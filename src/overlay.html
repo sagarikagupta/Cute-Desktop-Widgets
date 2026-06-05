@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SkyAlert Overlay</title>
+  <link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+  <!-- Flight container — cloned and animated for each notification -->
+  <template id="flight-template">
+    <div class="flight-path">
+      <div class="airplane-group">
+        <!-- Cloud puffs spawn here dynamically -->
+        <div class="banner-assembly">
+          <div class="banner">
+            <div class="banner-fold"></div>
+            <span class="banner-emoji">📅</span>
+            <span class="banner-text">Event Name</span>
+          </div>
+          <div class="rope">
+            <svg width="60" height="20" viewBox="0 0 60 20">
+              <path d="M0 10 Q15 2, 30 10 Q45 18, 60 10" stroke="#F9A8B8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="airplane">
+          <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
+            <!-- Back Wing (Right) -->
+            <path d="M 90,40 L 130,5 L 150,5 L 120,40 Z" fill="#FFD1DC"/>
+            <!-- Back Tail Stabilizer -->
+            <path d="M 40,40 L 60,15 L 75,15 L 55,40 Z" fill="#FFD1DC"/>
+            <!-- Vertical Tail Fin -->
+            <path d="M 30,50 L 50,10 L 70,10 L 60,50 Z" fill="#FFB5C2"/>
+            
+            <!-- Main Body (Chubby) -->
+            <path d="M 25,40 L 130,40 C 170,40 185,55 185,70 C 185,85 170,100 130,100 L 25,100 C 10,100 5,85 5,70 C 5,55 10,40 25,40 Z" fill="#FFB5C2"/>
+            
+            <!-- Cockpit Window -->
+            <path d="M 140,40 C 160,40 170,48 175,55 L 140,55 Z" fill="#E8F4FD"/>
+            
+            <!-- Passenger Windows -->
+            <circle cx="60" cy="65" r="6" fill="#E8F4FD"/>
+            <circle cx="85" cy="65" r="6" fill="#E8F4FD"/>
+            <circle cx="110" cy="65" r="6" fill="#E8F4FD"/>
+            
+            <!-- Front Wing (Left) -->
+            <path d="M 80,85 L 110,135 L 130,135 L 115,85 Z" fill="#FFC8D6"/>
+            <!-- Front Tail Stabilizer -->
+            <path d="M 35,85 L 50,115 L 65,115 L 55,85 Z" fill="#FFC8D6"/>
+            
+            <!-- Cute blush and eye -->
+            <circle cx="140" cy="75" r="6" fill="#FF9EB5" opacity="0.6"/>
+            <circle cx="155" cy="65" r="3.5" fill="#6B5060"/>
+            <circle cx="156" cy="63" r="1.5" fill="white"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <div id="stage"></div>
+
+  <script src="overlay.js"></script>
+</body>
+</html>
