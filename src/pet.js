@@ -136,6 +136,13 @@ function enterState(s, durationMs) {
 function decide() {
   if (state === 'drag') return;
 
+  if (!currentAccessory && Math.random() < 0.25) {
+    const acc = ['bow', 'sunglasses', 'flower', 'scarf'];
+    currentAccessory = acc[Math.floor(Math.random() * acc.length)];
+    accessoryTimer = Date.now() + (1000 * 60 * 2); // wear for 2 minutes
+    spawnParticles('star', 3);
+  }
+
   const isSad = love < SAD_THRESHOLD;
 
   if (isSad) {
@@ -147,6 +154,7 @@ function decide() {
   } else {
     // When happy: lots of wandering, occasional sit/idle/sleep, and sneezes!
     const r = Math.random();
+
     if      (r < 0.05) enterState('sneeze', 1300);
     else if (r < 0.65) enterState('wander', 4000 + Math.random() * 8000);
     else if (r < 0.80) enterState('idle',   2000 + Math.random() * 3000);
@@ -250,6 +258,47 @@ function drawShape(x, y, rx, ry, rot, fill) {
   ctx.restore();
 }
 
+let currentAccessory = 'sunglasses';
+let accessoryTimer = Date.now() + (1000 * 60 * 2);
+
+function drawAccessory(type, x, y) {
+  ctx.save();
+  ctx.translate(x, y);
+  if (type === 'bow') {
+    ctx.translate(-25, -20);
+    ctx.rotate(-0.25); // Slant the bow slightly outwards
+    ctx.fillStyle = '#E74C3C';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-12, -8); ctx.lineTo(-12, 8); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(12, -8); ctx.lineTo(12, 8); ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2); ctx.fill();
+  } else if (type === 'sunglasses') {
+    ctx.translate(0, 0);
+    ctx.fillStyle = '#2C3E50';
+    ctx.beginPath(); ctx.roundRect(-30, -6, 25, 15, 4); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(5, -6, 25, 15, 4); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-5, -2); ctx.lineTo(5, -2); ctx.lineWidth = 3; ctx.strokeStyle = '#2C3E50'; ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.beginPath(); ctx.ellipse(-22, -2, 4, 2, -0.3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(13, -2, 4, 2, -0.3, 0, Math.PI*2); ctx.fill();
+  } else if (type === 'flower') {
+    ctx.translate(25, -20);
+    ctx.fillStyle = '#FFF';
+    for (let i=0; i<5; i++) {
+      ctx.save(); ctx.rotate((i/5)*Math.PI*2);
+      ctx.beginPath(); ctx.ellipse(0, -6, 4, 7, 0, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+    ctx.fillStyle = '#F1C40F';
+    ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2); ctx.fill();
+  } else if (type === 'scarf') {
+    ctx.translate(0, 34); // moved down to the neck/chin area
+    ctx.fillStyle = '#E74C3C';
+    ctx.beginPath(); ctx.ellipse(0, 0, 24, 8, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(10, 4); ctx.lineTo(18, 20); ctx.lineTo(2, 14); ctx.fill();
+  }
+  ctx.restore();
+}
+
 function drawDog(dt) {
   const running = state === 'wander';
   const sleeping = state === 'sleep';
@@ -308,6 +357,9 @@ function drawDog(dt) {
     // Nose
     ctx.fillStyle = FACE_C;
     ctx.beginPath(); ctx.ellipse(cx, houseHeadY + 8 + breathe, 4, 3, 0, 0, Math.PI * 2); ctx.fill();
+
+    if (currentAccessory) drawAccessory(currentAccessory, cx, houseHeadY + breathe);
+
     ctx.restore(); // remove scale for Zzz's
 
     // Zzz (Unscaled so they are visible)
@@ -371,6 +423,8 @@ function drawDog(dt) {
     ctx.strokeStyle = FACE_C; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.arc(cx - 4, sleepHeadY + 17, 4, 0, Math.PI); ctx.stroke();
     ctx.beginPath(); ctx.arc(cx + 4, sleepHeadY + 17, 4, 0, Math.PI); ctx.stroke();
+
+    if (currentAccessory) drawAccessory(currentAccessory, cx, sleepHeadY);
 
     // Zzz floating up
     const zp = ((Date.now() / 1800) % 1);
@@ -560,6 +614,8 @@ function drawDog(dt) {
     ctx.restore();
   }
 
+  if (currentAccessory) drawAccessory(currentAccessory, cx, headY);
+
   ctx.restore();
 }
 
@@ -573,6 +629,11 @@ function loop(ts) {
   if (behaviorClock > 7 && ['wander', 'idle', 'sit', 'sad'].includes(state) && state !== 'drag') {
     behaviorClock = 0;
     if (Math.random() < 0.45) decide();
+  }
+
+  if (currentAccessory && Date.now() > accessoryTimer) {
+    currentAccessory = null;
+    spawnParticles('sparkle', 3);
   }
 
   // Idle-based sleep: sleep after 5 min of no mouse, wake on move
