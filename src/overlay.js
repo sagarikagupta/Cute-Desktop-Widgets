@@ -178,8 +178,18 @@ function flyAirplane(data) {
 
 // ─── Listen for flights from main process ───────────────────
 if (window.skyalert) {
+  // Handle incoming airplane flights from main process
   window.skyalert.onFlyAirplane((data) => {
     flyAirplane(data);
+  });
+
+  // Position the doghouse exactly on top of the taskbar
+  window.skyalert.getScreenBounds().then(b => {
+    const taskbarHeight = b.bounds.height - b.workArea.height;
+    const dogHouse = document.getElementById('dog-house');
+    if (dogHouse) {
+      dogHouse.style.bottom = `${taskbarHeight}px`;
+    }
   });
 }
 

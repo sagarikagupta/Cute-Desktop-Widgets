@@ -6,6 +6,7 @@ const GoogleAuth = require('./auth/google-auth');
 
 let overlayWindow = null;
 let settingsWindow = null;
+let petWindow = null;
 let tray = null;
 let store = null;
 let scheduler = null;
@@ -81,6 +82,56 @@ function createSettingsWindow() {
   settingsWindow.on('closed', () => { settingsWindow = null; });
 }
 
+// ─── Pet Window ─────────────────────────────────────────────────────
+function createPetWindow() {
+  if (petWindow && !petWindow.isDestroyed()) return;
+
+  const display = screen.getPrimaryDisplay();
+  const workArea = display.workArea; // Excludes taskbar
+  const scaleFactor = display.scaleFactor || 1;
+  const pW = Math.round(220 * scaleFactor);
+  const pH = Math.round(300 * scaleFactor);
+
+  petWindow = new BrowserWindow({
+    width: pW,
+    height: pH,
+    x: workArea.x + Math.floor(workArea.width / 2) - Math.floor(pW/2),
+    y: workArea.y + workArea.height - pH,
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    hasShadow: false,
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    useContentSize: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+
+  // Pet should stay on top and receive mouse events for petting
+  petWindow.setVisibleOnAllWorkspaces(true);
+  petWindow.setAlwaysOnTop(true, 'screen-saver');
+  // CRITICAL: On Windows with transparent windows, clicks on transparent pixels
+  // pass through. This tells Electron to forward ALL mouse events to the renderer
+  // so we can do our own per-pixel hit detection.
+  petWindow.setIgnoreMouseEvents(true, { forward: true });
+  
+  petWindow.loadFile(path.join(__dirname, 'src', 'pet.html'));
+  
+  petWindow.on('closed', () => { petWindow = null; });
+}
+
+function removePetWindow() {
+  if (petWindow && !petWindow.isDestroyed()) {
+    petWindow.close();
+  }
+}
+
 // ─── System Tray ────────────────────────────────────────────────────
 function createTray() {
   // Create a 16x16 tray icon programmatically
@@ -151,6 +202,9 @@ function createTray() {
   }
 
   const contextMenu = Menu.buildFromTemplate([
+    { label: 'Spawn Pet', click: () => createPetWindow() },
+    { label: 'Remove Pet', click: () => removePetWindow() },
+    { type: 'separator' },
     { label: 'Test Flight', click: () => triggerTestFlight() },
     { type: 'separator' },
     { label: 'Settings', click: () => createSettingsWindow() },
@@ -222,6 +276,27 @@ ipcMain.handle('get-auth-status', () => {
 
 ipcMain.on('airplane-landed', () => { /* animation complete */ });
 
+ipcMain.on('move-pet', (event, { x, y, width, height }) => {
+  if (petWindow && !petWindow.isDestroyed()) {
+    petWindow.setBounds({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
+  }
+});
+
+ipcMain.on('set-pet-mouse-ignore', (event, ignore) => {
+  if (petWindow && !petWindow.isDestroyed()) {
+    petWindow.setIgnoreMouseEvents(ignore, { forward: true });
+  }
+});
+
+ipcMain.handle('get-screen-bounds', () => {
+  const display = screen.getPrimaryDisplay();
+  return {
+    workArea: display.workArea,
+    bounds: display.bounds,
+    scaleFactor: display.scaleFactor || 1
+  };
+});
+
 // ─── App Lifecycle ──────────────────────────────────────────────────
 app.whenReady().then(() => {
   store = new Store();
@@ -242,6 +317,13 @@ app.whenReady().then(() => {
   setTimeout(() => {
     triggerTestFlight();
   }, 3000);
+
+  // Broadcast global mouse position for eye tracking
+  setInterval(() => {
+    if (petWindow && !petWindow.isDestroyed()) {
+      petWindow.webContents.send('global-mouse-move', screen.getCursorScreenPoint());
+    }
+  }, 50);
 });
 
 app.on('window-all-closed', (e) => {

@@ -20,5 +20,11 @@ contextBridge.exposeInMainWorld('skyalert', {
   // Settings window events
   onSettingsUpdate: (callback) => {
     ipcRenderer.on('settings-updated', (_event, data) => callback(data));
-  }
+  },
+
+  // Pet API
+  movePet: (bounds) => ipcRenderer.send('move-pet', bounds),
+  getScreenBounds: () => ipcRenderer.invoke('get-screen-bounds'),
+  setPetMouseIgnore: (ignore) => ipcRenderer.send('set-pet-mouse-ignore', ignore),
+  onGlobalMouseMove: (callback) => ipcRenderer.on('global-mouse-move', (_event, pt) => callback(pt))
 });

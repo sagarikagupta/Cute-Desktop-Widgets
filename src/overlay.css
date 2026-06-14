@@ -228,3 +228,14 @@ html, body {
 .speed-slow  { --flight-duration: 20s; }
 .speed-normal { --flight-duration: 14s; }
 .speed-fast  { --flight-duration: 8s; }
+
+#dog-house {
+  position: absolute;
+  right: 20px;
+  width: 160px;
+  height: 140px;
+  opacity: 0.9;
+  filter: drop-shadow(0px 6px 12px rgba(0,0,0,0.15));
+  z-index: 50;
+  pointer-events: none;
+}

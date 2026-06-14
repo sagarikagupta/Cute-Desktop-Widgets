@@ -1,0 +1,110 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 220px;
+  height: 325px;
+  background: transparent;
+  overflow: visible;
+  user-select: none;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* ─── Care Panel ─── */
+#carePanel {
+  position: absolute;
+  top: 0; left: 0;
+  width: 220px;
+  height: 85px;
+  background: rgba(255, 245, 235, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 18px 18px 0 0;
+  border: 1.5px solid rgba(230, 185, 130, 0.6);
+  box-shadow: 0 -4px 20px rgba(200, 140, 60, 0.15), 0 4px 10px rgba(0,0,0,0.08);
+  padding: 8px 12px 6px;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+#carePanel.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+
+.stats-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-icon { font-size: 11px; }
+
+.stat-bar {
+  flex: 1;
+  height: 7px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.actions-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.action-btn {
+  flex: 1;
+  border: 1.5px solid rgba(210, 160, 90, 0.5);
+  border-radius: 12px;
+  background: rgba(255, 235, 200, 0.7);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 2px 3px;
+  text-align: center;
+  line-height: 1.1;
+  color: #6B4A2A;
+  transition: background 0.15s, transform 0.1s;
+  -webkit-app-region: no-drag;
+}
+
+.action-btn small {
+  display: block;
+  font-size: 9px;
+  opacity: 0.8;
+  margin-top: 1px;
+}
+
+.action-btn:hover {
+  background: rgba(255, 215, 160, 0.95);
+  transform: scale(1.05);
+}
+
+.action-btn:active {
+  transform: scale(0.97);
+}
+
+/* ─── Canvas ─── */
+#petCanvas {
+  position: absolute;
+  top: 85px;
+  left: 0;
+  width: 220px;
+  height: 240px;
+  image-rendering: auto;
+}
